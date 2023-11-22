@@ -1,0 +1,46 @@
+#!/usr/bin/python3
+import argparse
+from sys import stdin
+from wc_utils import count_lines, count_words, count_bytes, count_chars, process_input
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(prog="mywc", 
+                                     description="print line, word, byte and chars count for data source")
+    parser.add_argument("filename", nargs='?', default=stdin)
+    parser.add_argument("-c", "--bytes", action="store_true", help="print the bytes count")
+    parser.add_argument("-w", "--words", action="store_true", help="print the words count")
+    parser.add_argument("-l", "--lines", action="store_true", help="print the lines count")
+    parser.add_argument("-m", "--chars", action="store_true", help="print the chars count")
+
+    return parser.parse_args()
+
+def main():
+    args = parse_arguments()
+    
+    try: 
+        if args.filename is stdin and stdin.isatty():
+            raise Exception
+        data = process_input(args.filename)
+    except Exception:
+        print("Provide input data. Check --help for more info")
+        return
+    
+    output = []
+
+    if not (args.bytes or args.words or args.lines or args.chars):
+        args.lines = args.words = args.bytes = True
+    if args.lines:
+        output.append(f"Lines: {count_lines(data)}")
+    if args.words:
+        output.append(f"Words: {count_words(data)}")
+    if args.chars:
+        output.append(f"Characters: {count_chars(data)}")
+    if args.bytes:
+        output.append(f"Bytes: {count_bytes(data)}")
+
+    result = "  ".join(output)
+    file = "" if hasattr(args.filename, "read") else f"File: {args.filename}"
+    print(f"{result}\t{file}")
+
+if __name__ == "__main__":
+    main()
