@@ -13,6 +13,6 @@ def count_chars(data):
 def process_input(data):
     if hasattr(data, 'read'):
         return data.buffer.read()
-    else:
-        with open(data, 'rb') as f:
-            return f.read()
+    
+    with open(data, 'rb') as f:
+        return f.read()
